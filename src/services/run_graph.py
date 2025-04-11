@@ -1,4 +1,4 @@
-from app.chains.graph_builder import build_graph
+from src.chains.graph_builder import build_graph
 
 
 GRAPH = build_graph()
