@@ -35,3 +35,12 @@
 
 # 4. 세부 설계
 
+# 5. ETC
+## 구조 설명
+
+`chains/`: LangGraph 중심. Node 흐름 설계
+`chains/nodes/`: 각 노드 기능 정의
+`agents/`: LangChain 기반 Agent 정의
+`routes/`: api endpoint
+`config.py`: 공통 설정, API KEY
+
