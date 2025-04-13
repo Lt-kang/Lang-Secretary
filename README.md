@@ -15,11 +15,49 @@
 
 
 
+___
+## 실행 환경
+```
+window 10
+
+python 3.11.5
+```
+
+## 실행 방법
+* 필요한 라이브러리 설치 완료되었다고 가정. (`requierments.txt` 참조)
+
+1. python package 설치
+```
+python -m pip install -r requierments.txt
+```
+
+2. api server 실행
+```
+python -m src.fastapi_app
+```
+
+3. frontend server 실행  
+```
+python -m streamlit run ./frontend/streamlit_app.py
+```
+___
+
+
+
+<br><br><br>
+
+
+
+
+
+
 # 1. 문제 정의
     a. 개발자로 일하기엔 실력이 부족하다. 어떻게 하면 ai를 활용하여 빠른 시간 내에 지식을 습득할 수 있을까?
 
+<br><br><br>
+
 # 2. 요구사항 정리
-    a. 아침마다 아침 날씨와 해당 날씨에 맞는 복장을 브리핑
+    a. 아침마다 아침 날씨와 해당 날씨에 맞는 복장을 브리핑 <개인적으로 많이 사용해서 넣음.>
     b. arxiv 링크를 주면 해당 논문을 download하여 vectorDB에 저장
     c. 해당 논문을 사용자가 이해할 수 있도록 리뷰
         1) 영어 -> 한국어 번역
@@ -30,17 +68,55 @@
     f. 대화 내용은 일자 기준으로 저장하며 언제든지 불러올 수 있음
 
 
+<br><br><br>
+
 # 3. 아키텍처 설계
+
+## 3.1 시스템 구성도
+
+
+## 3.2 주요 컴포넌트
+1. Categorize LLM
+   - 가장 먼저 사용자 입력을 받는 LLM
+   - 사용자 요청을 분류하여 알맞은 LLM에 전달함.
+
+2. Study LLM
+   - ...
+
+3. Weather Agent
+   - ...
+
+4. Paper Agent
+   - ...
+
+5. Paper Agent
+   - ...
+
+## 3.3 데이터 흐름
+1. 사용자 입력 → Categorize LLM
+2. Categorize LLM → (Study LLM / Weather LLM / Paper LLM / Default LLM)
+3. LLM   
+    3-a. Study LLM -> ...  
+    3-b. Weather LLM -> ...  
+    3-c. Paper LLM -> ...  
+    3-d. Default LLM -> gpt-4o 기본 응답
+4. 처리 결과 → 사용자 응답
+
+## 3.4 기술 스택
+- Backend: FastAPI
+- Frontend: streamlit
+- LLM: OpenAI GPT 
+- LLM Framework: LangChain, LangGraph
+- Vector DB: Chroma
+- Storage: SQLite (대화 기록)
+
+
+<br><br><br>
 
 
 # 4. 세부 설계
 
-# 5. ETC
-## 구조 설명
+<br><br><br>
 
-`chains/`: LangGraph 중심. Node 흐름 설계
-`chains/nodes/`: 각 노드 기능 정의
-`agents/`: LangChain 기반 Agent 정의
-`routes/`: api endpoint
-`config.py`: 공통 설정, API KEY
+# 5. ETC
 

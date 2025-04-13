@@ -1,5 +1,8 @@
 import streamlit as st
 import requests
+import subprocess
+import sys
+
 
 
 st.set_page_config(page_title="LangGraph Chat Bot", page_icon=":shark:")
@@ -21,5 +24,10 @@ with st.form("Question"):
   "kwargs": {}
 })
         print(response.json())
-        st.write(f"LangGraph-bot node state: {response.json()['output']['route']}")
-        st.write(f"LangGraph-bot response: {response.json()['output']['response']}")
+        st.write(f"node state: {response.json()['output']['route']}")
+        st.write(f"[response]\n{response.json()['output']['response']}")
+
+
+
+# if __name__ == "__main__":
+#     run_streamlit()
