@@ -42,7 +42,39 @@ test code
 #         return "default"
     
 
+# paper node를 여러 단계로 구성할 예정
+''' 예시 코드
+graph = StateGraph(GraphState)
 
+# 노드 등록
+graph.add_node("classifier", classify_input)
+graph.add_node("emotional", emotional_node)
+
+# 기술 노드를 여러 단계로 구성
+graph.add_node("tech_1", tech_node_1)
+graph.add_node("tech_2", tech_node_2)
+
+# 시작 노드
+graph.set_entry_point("classifier")
+
+# 분기 설정
+graph.add_conditional_edges(
+    "classifier",
+    lambda state: state["route"],
+    {
+        "emotional": "emotional",
+        "technical": "tech_1"  # 기술은 tech_1부터 시작
+    }
+)
+
+# 기술 흐름 연결
+graph.add_edge("tech_1", "tech_2")
+
+# 종료 포인트 설정
+graph.set_finish_point("emotional")
+graph.set_finish_point("tech_2")
+
+'''
 def build_graph():
     graph = StateGraph(GraphState)
 

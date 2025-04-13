@@ -3,6 +3,19 @@ from langchain.chains import RetrievalQA
 
 from src.db.vector_db import init_vector_db
 
+
+# Prompt Template 사용을 고려해볼것
+''' 예시 코드
+from langchain_core.prompts import PromptTemplate
+
+emotional_template = PromptTemplate.from_template(
+    "사용자의 말에 위로가 되는 감정적 대답을 해줘:\n사용자: {input}"
+)
+emotional_chain: Runnable = emotional_template | ChatOpenAI(model="gpt-3.5-turbo", temperature=0.7)
+'''
+
+
+
 '''
 지식 관련된 내용은 정확한 답변 유도를 위해 temperature를 0으로 설정
 '''
