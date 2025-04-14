@@ -2,7 +2,7 @@ from langgraph.graph import StateGraph
 from typing import TypedDict
 
 
-from src.chains.nodes import llm_categorize, llm_default, llm_paper, llm_weather, llm_study
+from src.chains.nodes import node_categorize, node_default, node_paper, node_study, node_weather
 
 
 class GraphState(TypedDict):
@@ -78,11 +78,11 @@ graph.set_finish_point("tech_2")
 def build_graph():
     graph = StateGraph(GraphState)
 
-    graph.add_node("categorize", llm_categorize.categorize_input)
-    graph.add_node("weather", llm_weather.weather_node)
-    graph.add_node("paper", llm_paper.paper_node)
-    graph.add_node("study", llm_study.study_node)
-    graph.add_node("default", llm_default.fallback_node)
+    graph.add_node("categorize", node_categorize.categorize_input)
+    graph.add_node("weather", node_weather.weather_node)
+    graph.add_node("paper", node_paper.paper_node)
+    graph.add_node("study", node_study.study_node)
+    graph.add_node("default", node_default.fallback_node)
 
     graph.set_entry_point("categorize")
 
