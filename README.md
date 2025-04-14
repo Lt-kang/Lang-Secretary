@@ -31,12 +31,7 @@ python -m pip install -r requierments.txt
 
 ### 2. .env 설정
 ```
-PYTHONPATH=.
-
-OPENAI_API_KEY=YOUR_OPENAI_API_KEY          # 반드시 설정
-
-VECTOR_DB_PATH=./src/db/storage/vector_db   # 변경 가능
-STUDY_DB_PATH=./src/db/storage/study_db     # 변경 가능
+.env.example 참조
 ```
 
 ### 2. api server 실행
@@ -50,6 +45,13 @@ python -m streamlit run ./frontend/streamlit_app.py
 ```
 ___
 
+
+## 구현 상황
+|agent name|state|
+|----------|-----|
+|Weather agnet|✅|
+|Paper agnet|❌|
+|Study agnet|❌|
 
 
 <br><br><br>
@@ -92,7 +94,8 @@ ___
    - ...
 
 3. Weather Agent
-   - ...
+   - 당일 날씨를 알려줌. (위치는 입력 받거나 `.env`파일 내 Default 값을 따름)
+   - 날씨에 따른 추천 복장도 함께 알려줌. (미구현)
 
 4. Paper Agent
    - ...
@@ -105,7 +108,7 @@ ___
 2. Categorize LLM → (Study LLM / Weather LLM / Paper LLM / Default LLM)
 3. LLM   
     3-a. Study LLM -> ...  
-    3-b. Weather LLM -> ...  
+    3-b. Weather LLM
     3-c. Paper LLM -> ...  
     3-d. Default LLM -> gpt-4o 기본 응답
 4. 처리 결과 → 사용자 응답

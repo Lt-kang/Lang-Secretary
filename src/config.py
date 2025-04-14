@@ -12,3 +12,4 @@ STUDY_DB_PATH = os.getenv("STUDY_DB_PATH")
 OPENWEATHER_CITY = os.getenv("OPENWEATHER_CITY")
 OPENWEATHER_API_KEY = os.getenv("OPENWEATHER_API_KEY")
 
+VERBOSE = True if os.getenv("VERBOSE")=="1" else False
