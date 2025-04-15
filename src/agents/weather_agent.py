@@ -12,9 +12,13 @@ lang = "kr"
 
 '''
 TODO
+1.
 현재는 openweathermap에서 날씨를 조회하지만
 다만 이럴 경우 한국의 경우 서울만 검색이 가능하기에
 추후 기상청 api를 활용하도록 수정해야 합니다.
+
+2.
+외부 api를 사용하므로 추후 비동기 처리 고려
 '''
 def weather_tool(city:str = OPENWEATHER_CITY) -> tuple[float, str]:
     if "'" in city:

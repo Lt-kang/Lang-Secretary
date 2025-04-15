@@ -1,7 +1,7 @@
 from langchain_openai import ChatOpenAI 
 from langchain.chains import RetrievalQA
 
-from src.db.vector_db import init_vector_db
+from src.vectordb.connection import vector_db_connection
 
 
 # Prompt Template 사용을 고려해볼것
@@ -40,8 +40,8 @@ default_llm = ChatOpenAI(model="gpt-4.1", temperature=DEFAULT_T)
 RAG
 paper LLM과 vector DB를 연결
 '''
-vectorstore = init_vector_db()
-paper_retriever = vectorstore.as_retriever()
+vector_db = vector_db_connection()
+paper_retriever = vector_db.as_retriever()
 paper_rag_chain = RetrievalQA.from_chain_type(llm=paper_llm, retriever=paper_retriever)
 
 
