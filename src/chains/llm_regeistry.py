@@ -21,9 +21,9 @@ emotional_chain: Runnable = emotional_template | ChatOpenAI(model="gpt-3.5-turbo
 '''
 KNOWLEDGE_T  = 0
 
-categorize_llm = ChatOpenAI(model="gpt-3.5-turbo", temperature=KNOWLEDGE_T)
-paper_llm = ChatOpenAI(model="gpt-4o", temperature=KNOWLEDGE_T)
-study_llm = ChatOpenAI(model="gpt-4o", temperature=KNOWLEDGE_T)
+categorize_llm = ChatOpenAI(model="gpt-4.1-nano", temperature=KNOWLEDGE_T)
+paper_llm = ChatOpenAI(model="gpt-4.1", temperature=KNOWLEDGE_T)
+study_llm = ChatOpenAI(model="gpt-4.1", temperature=KNOWLEDGE_T)
 
 
 '''
@@ -31,8 +31,8 @@ study_llm = ChatOpenAI(model="gpt-4o", temperature=KNOWLEDGE_T)
 '''
 DEFAULT_T = 0.0
 
-weather_llm = ChatOpenAI(model="gpt-4o", temperature=DEFAULT_T)
-default_llm = ChatOpenAI(model="gpt-4o", temperature=DEFAULT_T)
+weather_llm = ChatOpenAI(model="gpt-4.1", temperature=DEFAULT_T)
+default_llm = ChatOpenAI(model="gpt-4.1", temperature=DEFAULT_T)
 
 
 
