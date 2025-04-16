@@ -29,7 +29,7 @@ study_llm = ChatOpenAI(model="gpt-4.1", temperature=KNOWLEDGE_T)
 '''
 그 외 기타 답변에 대해서는 조금 더 유연한 답변을 위해 temperature를 0.3으로 설정
 '''
-DEFAULT_T = 0.0
+DEFAULT_T = 0.3
 
 weather_llm = ChatOpenAI(model="gpt-4.1", temperature=DEFAULT_T)
 default_llm = ChatOpenAI(model="gpt-4.1", temperature=DEFAULT_T)

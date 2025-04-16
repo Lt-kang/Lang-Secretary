@@ -4,7 +4,7 @@ from langchain_core.documents import Document
 import arxiv
 import re
 
-from src.config import PAPER_DIR
+from src.config import PAPER_SAVE_DIR
 
 
 
@@ -84,8 +84,8 @@ def arxiv_paper_download(paper: arxiv.Result) -> str:
     arxiv.Result 객체를 통해 논문을 다운 받아서 저장함.
     '''
     try:
-        paper.download_pdf(dirpath=PAPER_DIR, filename=f"{paper.entry_id.split('/')[-1]}.pdf")
-        return ({PAPER_DIR}/{paper.entry_id.split('/')[-1]}.pdf, f"논문을 다운받았습니다. 파일 위치: {PAPER_DIR}/{paper.entry_id.split('/')[-1]}.pdf")
+        paper.download_pdf(dirpath=PAPER_SAVE_DIR, filename=f"{paper.entry_id.split('/')[-1]}.pdf")
+        return ({PAPER_SAVE_DIR}/{paper.entry_id.split('/')[-1]}.pdf, f"논문을 다운받았습니다. 파일 위치: {PAPER_SAVE_DIR}/{paper.entry_id.split('/')[-1]}.pdf")
 
     except Exception as e:
         return f"논문을 다운받을 수 없습니다. {e}"

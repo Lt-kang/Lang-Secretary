@@ -1,3 +1,5 @@
+from langchain_core.prompts import PromptTemplate
+
 from src.chains.llm_regeistry import categorize_llm
 
 
@@ -19,15 +21,18 @@ from src.chains.llm_regeistry import categorize_llm
     문장: "{user_input}"
     """
 '''
-def categorize_input(state):
-    user_input = state["input"]
-    prompt = f"""
+categorize_prompt = PromptTemplate.from_template(
+    """
     다음 문장이 어떤 유형에 더 유사한지 골라주세요.
 
     답변은 반드시 단어로만 해주세요. [날씨, 논문, 키워드]
     
-    문장: "{user_input}"
+    문장: {input}
     """
+)
+def categorize_input(state):
+    user_input = state["input"]
+    prompt = categorize_prompt.format(input=user_input)
     result = categorize_llm.invoke(prompt)
     return {"input": user_input, "route": result.content.strip()}
 

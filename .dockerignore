@@ -1,0 +1,10 @@
+# 제외할 폴더들
+**/__pycache__/
+
+
+
+
+# 제외할 파일들
+*.gitignore
+*.md
+*.env.example

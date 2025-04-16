@@ -1,11 +1,12 @@
 from langchain.agents import Tool
 from langchain.agents import initialize_agent, AgentType
-import requests
 from pydantic import BaseModel
 
 from src.chains.llm_regeistry import weather_llm
 from src.config import OPENWEATHER_CITY, OPENWEATHER_API_KEY, VERBOSE
 
+import requests
+import re
 
 apikey = OPENWEATHER_API_KEY
 lang = "kr"
@@ -57,7 +58,12 @@ TODO
 '''
 def clothes_recommendation(input_text:str) -> str:
     temp, weather = input_text.split(",")
-    temp = float(temp.replace("'", ""))
+    
+    temp_match = re.search(r'[-+]?\d*\.\d+|\d+', temp)
+    if temp_match:
+        temp = temp_match.group()
+
+    temp = float(temp)
     if temp < 10:
         return "패딩" + " 우산" if "rain" in weather else ""
     elif temp < 20:
@@ -65,8 +71,7 @@ def clothes_recommendation(input_text:str) -> str:
     else:
         return "반팔" + " 우산" if "rain" in weather else ""
 
-
-        
+       
 
 class ClothesInput(BaseModel):
     weather_info: str
