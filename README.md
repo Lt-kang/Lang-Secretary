@@ -107,9 +107,9 @@ ___
 1. 사용자 입력 → Categorize LLM
 2. Categorize LLM → (Study LLM / Weather LLM / Paper LLM / Default LLM)
 3. LLM   
-    3-a. Study LLM -> ...  
-    3-b. Weather LLM
-    3-c. Paper LLM -> ...  
+    3-a. Study LLM -> ...    
+    3-b. Weather LLM    
+    3-c. Paper LLM -> ...    
     3-d. Default LLM -> gpt-4o 기본 응답
 4. 처리 결과 → 사용자 응답
 
@@ -131,3 +131,6 @@ ___
 
 # 5. ETC
 
+* Docker-compose로 배포를 하고싶으나 frontend 부분의 크기가 워낙 작아서 오히려 비효율이라 판단합니다.  
+그렇기에 차라리 docker image를 하나로만 생성하고 `run.sh`을 통해 api-server와 frontend server를 실행하는게 더 효율적이라 판단합니다.
+* 단, Docker-compose에 대한 yml은 남겨두도록 하겠습니다.
