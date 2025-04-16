@@ -51,7 +51,6 @@ weather_agent_tool = Tool(
 
 
 
-
 '''
 TODO
 복장 추천에 대해 조금 더 세밀하게 추가
@@ -88,13 +87,13 @@ tools = [
 ]
 
 
-
 weather_agent_executor = initialize_agent(
     tools=tools,
     llm=weather_llm,
     agent=AgentType.OPENAI_FUNCTIONS,
     verbose=VERBOSE
 )
+
 
 if __name__ == "__main__":
     response = weather_agent_executor.invoke({"input": "오늘 날씨 알려주고 복장 추천해줘"})

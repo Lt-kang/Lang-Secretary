@@ -13,3 +13,5 @@ OPENWEATHER_CITY = os.getenv("OPENWEATHER_CITY")
 OPENWEATHER_API_KEY = os.getenv("OPENWEATHER_API_KEY")
 
 VERBOSE = True if os.getenv("VERBOSE")=="1" else False
+
+PAPER_DIR = os.getenv("PAPER_DIR")
