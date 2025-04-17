@@ -36,12 +36,12 @@ python -m pip install -r requierments.txt
 
 ### 2. api server 실행
 ```
-python -m src.fastapi_app
+python -m src.run_api
 ```
 
 ### 3. frontend server 실행  
 ```
-python -m streamlit run ./frontend/streamlit_app.py
+python -m streamlit run ./frontend/run_streamlit.py
 ```
 ___
 
@@ -129,7 +129,21 @@ ___
 
 <br><br><br>
 
-# 5. ETC
+
+# 5. 추후 개발 사항
+- 미완성 agent 완성
+- backend/frontend 예외처리 추가
+- logging
+- TEST + CI
+- agent 내 api 사용 관련 함수들 비동기 전환
+- 문서화 및 다이어그램 작성
+
+
+
+<br><br><br>
+
+
+# 6. ETC
 
 * Docker-compose로 배포를 하고싶으나 frontend 부분의 크기가 워낙 작아서 오히려 비효율이라 판단합니다.  
 그렇기에 차라리 docker image를 하나로만 생성하고 `run.sh`을 통해 api-server와 frontend server를 실행하는게 더 효율적이라 판단합니다.
