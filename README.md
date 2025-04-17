@@ -134,7 +134,7 @@ ___
 - 미완성 agent 완성
 - backend/frontend 예외처리 추가
 - logging
-- TEST + CI
+- TEST + CI/CD (git actions + AWS light sail)
 - agent 내 api 사용 관련 함수들 비동기 전환
 - 문서화 및 다이어그램 작성
 
