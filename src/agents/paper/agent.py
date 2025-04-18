@@ -6,7 +6,7 @@ from langchain.text_splitter import RecursiveCharacterTextSplitter
 from pydantic import BaseModel
 
 from src.chains.llm_regeistry import paper_llm, vector_db
-from src.config import VERBOSE
+from src.core.config import VERBOSE
 from src.vectordb.document_saver import document_saver
 from src.utils.arxiv_tools import load_arxiv_document
 

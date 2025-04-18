@@ -15,4 +15,4 @@ runnable_chain = build_graph()
 add_routes(app, runnable_chain, path="/graphbot")
 
 if __name__ == "__main__":
-    uvicorn.run("src.run_api:app", host="0.0.0.0", port=8000, reload=True)
+    uvicorn.run("api.run_api:app", host="0.0.0.0", port=8000, reload=True)

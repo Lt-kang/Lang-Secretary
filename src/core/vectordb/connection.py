@@ -4,7 +4,7 @@ from pathlib import Path
 from langchain_openai import OpenAIEmbeddings
 from langchain_chroma import Chroma
 
-from src.config import VECTOR_DB_PATH
+from src.core.config import VECTOR_DB_PATH
 
 
 

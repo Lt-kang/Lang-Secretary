@@ -3,7 +3,7 @@ from langchain.agents import initialize_agent, AgentType
 from pydantic import BaseModel
 
 from src.chains.llm_regeistry import weather_llm
-from src.config import OPENWEATHER_CITY, OPENWEATHER_API_KEY, VERBOSE
+from src.core.config import OPENWEATHER_CITY, OPENWEATHER_API_KEY, VERBOSE
 
 import requests
 import re

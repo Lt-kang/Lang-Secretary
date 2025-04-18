@@ -4,7 +4,7 @@ from langchain_core.documents import Document
 import arxiv
 import re
 
-from src.config import PAPER_SAVE_DIR
+from src.core.config import PAPER_SAVE_DIR
 
 
 

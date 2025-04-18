@@ -1,7 +1,7 @@
 from langchain_openai import ChatOpenAI 
 from langchain.chains import RetrievalQA
 
-from src.vectordb.connection import vector_db_connection
+from src.core.vectordb import vector_db_connection
 
 
 # Prompt Template 사용을 고려해볼것
