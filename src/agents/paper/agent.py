@@ -1,15 +1,11 @@
 from langchain.agents import Tool
-from langchain.agents import initialize_agent, AgentType
 from langchain_core.documents import Document
-from langchain.text_splitter import RecursiveCharacterTextSplitter
 
-from pydantic import BaseModel
+from src.core.vectordb.connection import vector_db_connection
+from src.core.vectordb.document_save import document_saver
 
-from src.chains.llm_regeistry import paper_llm, vector_db
-from src.core.config import VERBOSE
-from src.vectordb.document_saver import document_saver
-from src.utils.arxiv_tools import load_arxiv_document
-
+from src.agents.paper.arxiv_tools import load_arxiv_document
+from src.schema.agent_input import PaperInput
 
 '''
 TODO
@@ -25,7 +21,7 @@ TODO
 load_paper_to_arxiv 함수를 통해 반환된 Document 형식의 데이터를 vector db에 저장
 '''
 def save_paper_to_vector_db(document:Document) -> str:
-    if document_saver(document, vector_db):
+    if document_saver(document, vector_db_connection()):
         return "논문 저장 완료"
     else:
         return "논문 저장 실패"
@@ -53,12 +49,9 @@ def extract_paper_data_to_markdown(paper_title:str, paper_url:str) -> str:
     ...
 
 
-class PaperInput(BaseModel):
-    paper_title: str
-    paper_url: str
 
 
-tools = [Tool(
+paper_tools = [Tool(
     name="find_duplicated_paper_in_vector_db",
     description="...",
     func=find_duplicated_paper_in_vector_db,
@@ -67,14 +60,4 @@ tools = [Tool(
 ]
 
 
-paper_agent_executor = initialize_agent(
-    tools=tools,
-    llm=paper_llm,
-    agent=AgentType.ZERO_SHOT_REACT_DESCRIPTION,
-    verbose=VERBOSE
-)
 
-if __name__ == "__main__":
-    response = paper_agent_executor.invoke({"input": "https://arxiv.org/pdf/2210.03629 이 링크 들어가서 논문 다운받고 db에 저장해"})
-    print(response)
-    

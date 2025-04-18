@@ -1,7 +1,5 @@
 import streamlit as st
 import requests
-import subprocess
-import sys
 
 
 from dotenv import load_dotenv

@@ -36,11 +36,7 @@ def extract_arxiv_id(input_str: str) -> str:
     arXiv URL, ID, 혹은 title 중에서 arXiv ID를 추출하거나 검색
     """
 
-    '''[arXiv URL]
-    ex)
-    "https://arxiv.org/pdf/2210.03629"
-    "https://arxiv.org/abs/2210.03629"
-    '''
+    # ex) "https://arxiv.org/pdf/2210.03629"
     match1 = re.search(r'arxiv\.org/pdf/(\d{4}\.\d{5})(v\d+)?', input_str)
     match2 = re.search(r'arxiv\.org/abs/(\d{4}\.\d{5})(v\d+)?', input_str)
 
@@ -50,15 +46,9 @@ def extract_arxiv_id(input_str: str) -> str:
         return match2.group(1)
 
 
-
-    '''[arXiv ID]
-    ex)
-    "2210.03629"
-    "2210.03629v1"
-    '''
+    # "2210.03629v1"
     if re.match(r'\d{4}\.\d{5}(v\d+)?'):
         return input_str
-
 
     return "논문을 찾을 수 없습니다."
 

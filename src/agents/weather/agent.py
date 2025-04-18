@@ -1,15 +1,14 @@
 from langchain.agents import Tool
-from langchain.agents import initialize_agent, AgentType
-from pydantic import BaseModel
-
-from src.chains.llm_regeistry import weather_llm
-from src.core.config import OPENWEATHER_CITY, OPENWEATHER_API_KEY, VERBOSE
 
 import requests
 import re
 
-apikey = OPENWEATHER_API_KEY
-lang = "kr"
+
+from src.schema.agent_input import ClothesInput, WeatherInput
+from src.core.config import OPENWEATHER_CITY, OPENWEATHER_API_KEY
+
+
+
 
 '''
 TODO
@@ -25,7 +24,7 @@ def weather_tool(city:str = OPENWEATHER_CITY) -> tuple[float, str]:
     if "'" in city:
         city = city.replace("'", "")
     print(f"\n<<<<<<<<<<<<<< {city}의 날씨를 조회합니다. >>>>>>>>>>>>>")
-    api_url = f"https://api.openweathermap.org/data/2.5/weather?q={city}&appid={apikey}&units=metric&lang={lang}"
+    api_url = f"https://api.openweathermap.org/data/2.5/weather?q={city}&appid={OPENWEATHER_API_KEY}&units=metric&lang=kr"
     response = requests.get(api_url)
 
     try:
@@ -37,18 +36,6 @@ def weather_tool(city:str = OPENWEATHER_CITY) -> tuple[float, str]:
         print(response.json())
         print("날씨 조회 실패")
         return "날씨 조회 실패"
-
-
-class WeatherInput(BaseModel):
-    city: str
-
-
-weather_agent_tool = Tool(
-    name="weather_tool",
-    description="도시명을 입력하면 (온도, 날씨) 정보를 반환합니다. 하지만 아무런 도시명을 말하지 않는다면 함수의 'city' 파라미터의 default 값을 사용합니다. 예: 'Seoul'",
-    func=weather_tool,
-    args_schema=WeatherInput
-    )
 
 
 
@@ -73,8 +60,12 @@ def clothes_recommendation(input_text:str) -> str:
 
        
 
-class ClothesInput(BaseModel):
-    weather_info: str
+weather_agent_tool = Tool(
+    name="weather_tool",
+    description="도시명을 입력하면 (온도, 날씨) 정보를 반환합니다. 하지만 아무런 도시명을 말하지 않는다면 함수의 'city' 파라미터의 default 값을 사용합니다. 예: 'Seoul'",
+    func=weather_tool,
+    args_schema=WeatherInput
+    )
 
 
 clothes_agent_tool = Tool(
@@ -86,21 +77,8 @@ clothes_agent_tool = Tool(
 
 
 
-tools = [
+weather_tools = [
     weather_agent_tool,
     clothes_agent_tool
 ]
 
-
-weather_agent_executor = initialize_agent(
-    tools=tools,
-    llm=weather_llm,
-    agent=AgentType.OPENAI_FUNCTIONS,
-    verbose=VERBOSE
-)
-
-
-if __name__ == "__main__":
-    response = weather_agent_executor.invoke({"input": "오늘 날씨 알려주고 복장 추천해줘"})
-    print(response)
-   
