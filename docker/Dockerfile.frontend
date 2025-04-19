@@ -11,4 +11,4 @@ RUN pip install python-dotenv==1.0.1
 
 EXPOSE 8080
 
-CMD ["streamlit", "run", "frontend/run_streamlit.py"]
+CMD ["streamlit", "run", "src/run_streamlit.py"]
