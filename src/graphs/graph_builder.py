@@ -2,7 +2,8 @@ from langgraph.graph import StateGraph
 
 
 
-from src.chains.chain_registry import categorize_chain, weather_chain, paper_chain, study_chain, default_chain
+from src.chains.chain_registry import categorize_chain, default_chain, study_chain
+from src.agents.agents_registry import weather_agent, paper_agent 
 from src.core.node import generate_node, categorize_node
 from src.schema.graph import GraphState
 
@@ -24,11 +25,20 @@ def route_logic(state):
 def build_graph():
     graph = StateGraph(GraphState)
 
+    '''
+    chain
+    '''
     graph.add_node("categorize", lambda state: categorize_node(state, categorize_chain))
-    graph.add_node("weather", lambda state: generate_node(state, weather_chain))
-    graph.add_node("paper", lambda state: generate_node(state, paper_chain))
-    graph.add_node("study", lambda state: generate_node(state, study_chain))
     graph.add_node("default", lambda state: generate_node(state, default_chain))
+    graph.add_node("study", lambda state: generate_node(state, study_chain))
+
+
+    '''
+    agent
+    '''
+    graph.add_node("weather", lambda state: generate_node(state, weather_agent))
+    graph.add_node("paper", lambda state: generate_node(state, paper_agent))
+    
 
 
     graph.set_entry_point("categorize")

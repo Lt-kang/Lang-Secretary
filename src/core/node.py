@@ -12,7 +12,7 @@ def categorize_node(state:dict, chain: Runnable) -> Runnable:
     '''
     user_input = state["input"]
     result = chain.invoke(user_input)
-    return {"input": user_input, "route": result.content.strip()}
+    return {"input": user_input, "route": result.strip()}
 
 
 
@@ -23,4 +23,8 @@ def generate_node(state: dict, chain: Runnable) -> Runnable:
     '''
     user_input = state["input"]
     result = chain.invoke(user_input)
-    return {"response": result.content}
+
+    if isinstance(result, str):
+        return {"response": result.strip()}
+    else:
+        return {"response": result['output']}
