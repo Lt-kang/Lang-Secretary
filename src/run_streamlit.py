@@ -52,10 +52,24 @@ if user_prompt := st.chat_input("메시지를 입력하세요..."):
                                         "kwargs": {}
                                       })
     
-    # 챗봇 응답을 세션에 저장
-    st.session_state.messages.append({"role": "assistant", 
-                                      "content": response.json()['output']['response']})
+
+    print(response.json())
     
-    # 챗봇 응답 출력
-    with st.chat_message("assistant"):
-        st.markdown(response.json()['output']['response'])
+    
+    try:
+        # 챗봇 응답을 세션에 저장
+        st.session_state.messages.append({"role": "assistant", 
+                                          "content": response.json()['output']['response']})
+        
+        # 챗봇 응답 출력
+        with st.chat_message("assistant"):
+            st.markdown(response.json()['output']['response'])
+
+    except Exception as e:
+        st.session_state.messages.append({"role": "assistant", 
+                                          "content": "응답에 실패하였습니다. \nException: " + str(e)})
+        
+        with st.chat_message("assistant"):
+            st.markdown("응답에 실패하였습니다. \nException: " + str(e))
+    
+    

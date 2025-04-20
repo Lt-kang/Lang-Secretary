@@ -30,7 +30,7 @@ def weather_tool(city:str = OPENWEATHER_CITY) -> tuple[float, str]:
     try:
         city_temperature = response.json()['main']['temp']
         city_weather = response.json()['weather'][0]['main']
-        return (city_temperature, city_weather)
+        return f"현재 {city}의 온도는 {city_temperature}도이고, 날씨는 {city_weather}입니다."
     
     except Exception as e:
         print(response.json())

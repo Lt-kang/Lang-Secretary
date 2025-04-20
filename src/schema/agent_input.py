@@ -6,8 +6,8 @@ from pydantic import BaseModel
 paper
 '''
 class PaperInput(BaseModel):
-    paper_title: str
-    paper_url: str
+    paper_info: str
+
 
 
 '''

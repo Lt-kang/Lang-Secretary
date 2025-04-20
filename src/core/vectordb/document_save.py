@@ -10,8 +10,12 @@ def document_saver(document:Document, vector_db:Chroma):
         split_docs = splitter.split_documents([document])
 
         vector_db.add_documents(split_docs)
-        vector_db.persist()
         return True
     
     except Exception as e:
+        print(f"Error saving document: {e}")
         return False
+
+
+
+

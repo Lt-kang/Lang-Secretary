@@ -1,7 +1,5 @@
 from langgraph.graph import StateGraph
 
-
-
 from src.chains.chain_registry import categorize_chain, default_chain, study_chain
 from src.agents.agents_registry import weather_agent, paper_agent 
 from src.core.node import generate_node, categorize_node
@@ -48,6 +46,7 @@ def build_graph():
     graph.set_finish_point("paper")
     graph.set_finish_point("study")
     graph.set_finish_point("default")
+
 
     runnable_chain = graph.compile()
     return runnable_chain
