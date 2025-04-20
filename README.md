@@ -41,7 +41,7 @@ python -m src.run_api
 
 ### 3. frontend server 실행  
 ```
-python -m streamlit run ./frontend/run_streamlit.py
+python -m streamlit run ./src/run_streamlit.py
 ```
 ___
 
