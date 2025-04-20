@@ -50,7 +50,7 @@ ___
 |agent name|state|
 |----------|-----|
 |Weather agnet|✅|
-|Paper agnet|❌|
+|Paper agnet|👨‍💻|
 |Study agnet|❌|
 
 
