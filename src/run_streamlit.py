@@ -9,38 +9,53 @@ load_dotenv()
 
 ENV = os.getenv("ENV")
 
-
-st.set_page_config(page_title="LangGraph Chat Bot", page_icon=":shark:")
-st.title("LangGraph Chat Bot")
-
-
 if ENV == "dev":
     backend_url = "http://localhost:8000"
 else:
     backend_url = "http://lang-backend:8000"
 
+st.set_page_config(page_title="Lang-Secretary", page_icon=":shark:")
+st.title("Lang-Secretary")
 
-with st.form("Question"):
-    text = st.text_area("질문 입력: ")
-    submitted = st.form_submit_button("보내기")
+
+# 세션 상태에 대화 저장
+if "messages" not in st.session_state:
+    st.session_state.messages = []
+
+# 페이지 타이틀
+st.title("💬")
+
+# 기존 대화 출력
+for msg in st.session_state.messages:
+    with st.chat_message(msg["role"]):
+        st.markdown(msg["content"])
+
+# 사용자 입력 받기
+if user_prompt := st.chat_input("메시지를 입력하세요..."):
+    # 사용자 메시지를 세션에 저장
+    st.session_state.messages.append({"role": "user", 
+                                      "content": user_prompt})
     
-    if submitted:
-        response = requests.post(f"{backend_url}/graphbot/invoke", 
+    # 사용자 메시지 출력
+    with st.chat_message("user"):
+        st.markdown(user_prompt)
+
+    # 여기에서 챗봇 응답 생성 (예시: 에코 응답)
+    response = requests.post(f"{backend_url}/graphbot/invoke", 
                                  json={
                                         "input": {
-                                          "input": text,
+                                          "input": user_prompt,
                                           "route": "string",
                                           "response": "string"
                                         },
                                         "config": {},
                                         "kwargs": {}
                                       })
-        print(type(response))
-        print(response.json())
-        st.write(f"node state: {response.json()['output']['route']}")
-        st.write(f"[response]\n{response.json()['output']['response']}")
-
-
-
-# if __name__ == "__main__":
-#     run_streamlit()
+    
+    # 챗봇 응답을 세션에 저장
+    st.session_state.messages.append({"role": "assistant", 
+                                      "content": response.json()['output']['response']})
+    
+    # 챗봇 응답 출력
+    with st.chat_message("assistant"):
+        st.markdown(response.json()['output']['response'])
