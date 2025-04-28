@@ -75,6 +75,10 @@ if __name__ == "__main__":
     # print(weather_agent.invoke("오늘 날씨와 추천 복장 알려줘"))
     # print("\n\n\n")
 
+    # while True:
+    #     user_input = input("input: ")
+    #     print(paper_agent.invoke(user_input))
+
     while True:
         user_input = input("input: ")
         print(paper_agent.invoke(user_input))

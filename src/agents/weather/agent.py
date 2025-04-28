@@ -29,8 +29,12 @@ def weather_tool(city:str = OPENWEATHER_CITY) -> tuple[float, str]:
 
     try:
         city_temperature = response.json()['main']['temp']
-        city_weather = response.json()['weather'][0]['main']
-        return f"현재 {city}의 온도는 {city_temperature}도이고, 날씨는 {city_weather}입니다."
+        city_weather = response.json()['weather'][0]['description']
+        city_wind_speed = response.json()['wind']['speed']
+        # return f"현재 {city}의 온도는 {city_temperature}도이고, 날씨는 {city_weather}입니다."
+        return f'''검색한 도시: {city}, 온도: {city_temperature}도, 날씨: {city_weather}, 풍속: {city_wind_speed}m/s
+        위 네가지 정보는 반드시 사용자에게 알려주고 위 정보를 바탕으로 복장을 함께 추천해주세요.'''
+    
     
     except Exception as e:
         print(response.json())
@@ -39,46 +43,20 @@ def weather_tool(city:str = OPENWEATHER_CITY) -> tuple[float, str]:
 
 
 
-'''
-TODO
-복장 추천에 대해 조금 더 세밀하게 추가
-'''
-def clothes_recommendation(input_text:str) -> str:
-    temp, weather = input_text.split(",")
-    
-    temp_match = re.search(r'[-+]?\d*\.\d+|\d+', temp)
-    if temp_match:
-        temp = temp_match.group()
-
-    temp = float(temp)
-    if temp < 10:
-        return "패딩" + " 우산" if "rain" in weather else ""
-    elif temp < 20:
-        return "가디건" + " 우산" if "rain" in weather else ""
-    else:
-        return "반팔" + " 우산" if "rain" in weather else ""
-
        
 
 weather_agent_tool = Tool(
     name="weather_tool",
-    description="도시명을 입력하면 (온도, 날씨) 정보를 반환합니다. 하지만 아무런 도시명을 말하지 않는다면 함수의 'city' 파라미터의 default 값을 사용합니다. 예: 'Seoul'",
+    description="도시명을 입력하면 (온도, 날씨) 정보를 반환합니다. 하지만 아무런 도시명을 말하지 않는다면 함수의 'city' 파라미터의 default 값을 사용합니다. 예: Seoul",
     func=weather_tool,
     args_schema=WeatherInput
     )
 
 
-clothes_agent_tool = Tool(
-    name="clothes_recommendation",
-    description="(온도, 날씨)를 입력하면 복장 추천을 합니다. example output: 패딩",
-    func=clothes_recommendation,
-    args_schema=ClothesInput
-)
 
 
 
 weather_tools = [
-    weather_agent_tool,
-    clothes_agent_tool
+    weather_agent_tool
 ]
 
