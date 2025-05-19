@@ -3,5 +3,3 @@ venv/
 storage/
 **/__pycache__/
 .vscode/
-Dockerfile
-run.sh

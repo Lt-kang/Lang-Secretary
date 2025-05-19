@@ -25,16 +25,20 @@ weather_mcp = FastMCP(
 )
 
 korea_city_list = open(Path(__file__).parent / 'assets' / 'korea_city.txt', 'r', encoding='utf-8').read().splitlines()
+korea_city_list = "\n".join(korea_city_list)
+
 china_city_list = open(Path(__file__).parent / 'assets' / 'china_city.txt', 'r', encoding='utf-8').read().splitlines()
+china_city_list = "\n".join(china_city_list)
+
 japan_city_list = open(Path(__file__).parent / 'assets' / 'japan_city.txt', 'r', encoding='utf-8').read().splitlines()
+japan_city_list = "\n".join(japan_city_list)
 '''
 openweathermap에서 제공하는 도시 리스트
 https://bulk.openweathermap.org/sample/city.list.json.gz
 '''
 @weather_mcp.tool()
 def global_weather_tool(city: str = 'Seoul') -> str:
-    f'''
-    이 함수는 가장 먼저 호출되어야 하는 함수 입니다.
+    f'''이 함수는 가장 먼저 호출되어야 하는 함수 입니다.
 
     이 함수는 날씨를 조회하기 이전 사용자 입력에서 
     입력 받은 도시가 국내(한국)인지 해외인지 확인하는 도구 입니다.
@@ -43,14 +47,14 @@ def global_weather_tool(city: str = 'Seoul') -> str:
     해외의 도시일 경우 "global_weather_tool"을 호출하세요.
 
     아래는 각각 한국과 해외의 도시 리스트입니다.
-    대한민국 도시 리스트: {'\n'.join(korea_city_list)}
+    대한민국 도시 리스트: {korea_city_list}
     * 만약 "OO구" 이런 입력이 들어온다면 이는 대한민국 서울시에 존재하는 지역구를 의미합니다.
     * 최대한 대한민국 지역에 대해서는 최대한 정확한 지역구를 입력해주세요.
 
-    해외(중국) 도시 리스트: {'\n'.join(china_city_list)}
-    해외(일본) 도시 리스트: {'\n'.join(japan_city_list)}
+    해외(중국) 도시 리스트: {china_city_list}
+    해외(일본) 도시 리스트: {japan_city_list}
     '''
-    print(city)
+    # print(city)
     api_url = f"https://api.openweathermap.org/data/2.5/weather?q={city}&appid={OPENWEATHER_API_KEY}&units=metric&lang=kr"
 
     try:

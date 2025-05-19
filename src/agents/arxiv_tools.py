@@ -43,7 +43,6 @@ def load_arxiv_document(arxiv_id: str) -> arxiv.Result:
 
     arxiv 라이브러리를 통해 논문을 다운받아 arxiv.Result 객체 반환
     '''
-
     try:
         search_by_id = arxiv.Search(id_list=[arxiv_id])
         paper = next(arxiv.Client().results(search_by_id))
@@ -51,19 +50,6 @@ def load_arxiv_document(arxiv_id: str) -> arxiv.Result:
     
     except Exception as e:
         return None
-
-
-
-def arxiv_paper_download(paper: arxiv.Result, save_dir: str) -> str:
-    '''
-    arxiv.Result 객체를 통해 논문을 다운 받아서 저장함.
-    '''
-    try:
-        paper.download_pdf(dirpath=save_dir, filename=f"{paper.entry_id.split('/')[-1]}.pdf")
-        return f"논문을 다운받았습니다. 파일 위치: {save_dir}/{paper.entry_id.split('/')[-1]}.pdf"
-
-    except Exception as e:
-        return f"논문을 다운받을 수 없습니다. {e}"
 
 
 
@@ -86,21 +72,3 @@ def extract_metadata_from_arxiv_result(paper: arxiv.Result):
                 }
 
     return metadata
-
-
-if __name__ == "__main__":
-    user_input = "https://arxiv.org/pdf/2210.03629 다운 받아"
-
-    arxiv_id = extract_arxiv_id(user_input)
-    print(arxiv_id)
-
-
-    paper = load_arxiv_document(arxiv_id)
-    print(paper)
-
-    result = arxiv_paper_download(paper)
-    print(result)
-
-    doc_obj = arxiv_paper_to_doc_obj(paper)
-    print(doc_obj)
-

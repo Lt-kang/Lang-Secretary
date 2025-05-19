@@ -1,5 +1,6 @@
 from pathlib import Path
 
+import os
 import sqlite3
 from langchain_openai import OpenAIEmbeddings
 from langchain_chroma import Chroma
@@ -35,7 +36,7 @@ def sqlite3_db_connection(db_path:str = SQLITE3_DB_PATH) -> sqlite3.Connection:
         conn = sqlite3.connect(db_path)
         return conn
     else:
-        Path(db_path).mkdir(parents=True, exist_ok=True)
+        os.makedirs(Path(db_path).parent, exist_ok=True)
         print("Init SQLite3 DB")
         conn = sqlite3.connect(db_path)
         cursor = conn.cursor()

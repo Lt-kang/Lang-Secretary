@@ -5,7 +5,7 @@ from langchain_mcp_adapters.tools import load_mcp_tools
 from langgraph.prebuilt import create_react_agent
 
 
-from src.config import WEATHER_MCP_PORT
+from src.config import WEATHER_MCP_PORT, normal_storage_config
 import os    
 
 from src.core.chain_registry import (
@@ -98,24 +98,34 @@ from langchain.prompts import PromptTemplate
 from src.agents.arxiv_tools import (
     extract_arxiv_id,
     load_arxiv_document,
-    arxiv_paper_download,
     extract_metadata_from_arxiv_result
 )
+
 arxiv_agent = create_react_agent(paper_llm, 
-                                 tools=[extract_arxiv_id],
-                                 prompt=PromptTemplate.from_template(
-                                   """
-                                   당신은 arxiv_tool 관련 모든 대화를 처리하는 agent 입니다.
-                                   """))
+                            tools=[extract_arxiv_id],
+                            # prompt=PromptTemplate.from_template(
+                            # """
+                            # 당신은 arxiv_tool 관련 모든 대화를 처리하는 agent 입니다.
+                            # """)
+                            )
 def check_duplicated_arxiv_id(state:dict):
     try:
+
+        
         inputs = {"messages": [("system", """
                                             extract_arxiv_id을 사용하여 
                                             사용자의 입력을 받아 올바른 형식의 arxiv_id 혹은 arxiv_url을 추출하세요.
                                             별도의 메시지를 출력하지 말고 오직 추출된 arxiv_id 혹은 arxiv_url을 반환하세요.
+                                            만약 arxiv.org 도메인의 url을 입력 받았다면 arxiv_id를 추출해주세요.
+                                            arxiv_id는 해당 url의 마지막 부분을 의미합니다.
+                                
+                                        ex) https://arxiv.org/pdf/2210.03629 다운 받아 -> 2210.03629
                                         """),
-                            ("human", state["user_input"])]}
-        arxiv_id = arxiv_agent.invoke(inputs)
+                            ("human", f'{state["user_input"].split("Human:")[-1].strip()} ~ 이 문장에서 arxiv_id를 추출해주세요.')]}
+        
+        print(f'{state["user_input"].split("Human:")[-1].strip()} 이 문장에서 arxiv_id를 추출해주세요.')
+        arxiv_id = arxiv_agent.invoke(inputs)['messages'][-1].content
+        print(arxiv_id)
 
         if arxiv_id:
             duplicated_result = search_arxiv_id(arxiv_id)
@@ -128,24 +138,26 @@ def check_duplicated_arxiv_id(state:dict):
         return state
     
     except Exception as e:
-        state["final_answer"] = "오류가 발생했습니다. 다시 시도해주세요."
+        state["final_answer"] = f"오류가 발생했습니다. 다시 시도해주세요. {e}"
         state["paper_duplicated_check"] = "error"
         return state
 
 
 
 from pathlib import Path
+normal_storage_path = normal_storage_config['save_path']
 def save_paper(state:dict):
     # arxiv paper 객체 로드
     paper_arxiv_obj = load_arxiv_document(state["paper_arxiv_id"]) # 최신 arxiv_id를 얻기 위해 다시 load 함.
 
     arxiv_id = paper_arxiv_obj.entry_id.split('/')[-1]
-    state['arxiv_id'] = arxiv_id
+    state['paper_arxiv_id'] = arxiv_id
 
 
     # arxiv paper 객체를 통해 논문 다운로드
-    save_path = Path(state["paper_save_dir"]) / arxiv_id / f"{arxiv_id}.pdf"
-    arxiv_paper_download(paper_arxiv_obj, save_path)
+    save_path = Path(normal_storage_path) / arxiv_id
+    os.makedirs(save_path, exist_ok=True)
+    paper_arxiv_obj.download_pdf(dirpath=save_path, filename=f"{arxiv_id}.pdf")
 
 
     # vector db에 저장
@@ -160,7 +172,7 @@ def save_paper(state:dict):
                                         한국어로 번역하지 말고 원문 그대로 남겨주세요.
                                       """),
                            ("human", metadata["abstract"])]}
-    abstract = arxiv_agent.invoke(inputs)
+    abstract = arxiv_agent.invoke(inputs)['messages'][-1].content
     state["paper_summary"] = abstract
 
     paper_info = {"arxiv_id": arxiv_id,
@@ -180,15 +192,23 @@ def summary_paper(state:dict):
     단, 사용자에게 답변할 때에는 아래와 같은 양식을 따라주세요.
     
     # Abstract
-    [논문의 abstract]
+    [논문의 abstract / 이때 .뒤에 개행 반드시 넣어줘. 이러면 가독성이 더 좋아]
     # Summary
     [논문의 요약]
+    # Keyword
+    [논문의 키워드 / 논문의 키워드는 기술명 중심으로 정리해줘. 이 논문을 이해하기 위해서 이 키워드는 알아야한다. 이런 부분들에 대해 작성해줘]
+    # reference
+    [해당 논문을 더 깊게 이해하기 위한 추천 논문 목록]
                             
     또한 사용자가 보기 편하도록 당신이 어느정도의 구조화를 해주는 것이 좋습니다.
-                                    """),
+    또한 markdown 파일로 저장할 것이기 때문에 당신이 적절한 마크다운 형식으로 답변해주세요.
+                                        """),
                            ("human", state["paper_summary"])]}
-    answer = arxiv_agent.invoke(inputs)
+    answer = arxiv_agent.invoke(inputs)['messages'][-1].content
     state["final_answer"] = answer
+
+    with open(Path(normal_storage_path) / state["paper_arxiv_id"] / f"{state['paper_arxiv_id']}.md", "w", encoding="utf-8") as f:
+        f.write(answer)
     return state
 
 
