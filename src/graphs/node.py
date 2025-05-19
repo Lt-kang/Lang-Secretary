@@ -65,7 +65,7 @@ def default_answer_node(state:dict):
 #             inputs = {"messages": [("human", user_input)]}
 
 #             result = await agent.ainvoke(inputs)
-#     state['final_answer'] = result
+#     state['final_answer'] = result['messages'][-1].content
 #     return state
 
 
@@ -83,9 +83,7 @@ async def call_weather_mcp(state:dict):
     user_input = state['user_input']
     inputs = {"messages": [("human", user_input)]}
 
-    # print(inputs)
     result = await agent.ainvoke(inputs)
-    # print(result['messages'][-1].content)
     state['final_answer'] = result['messages'][-1].content
     return state
 
@@ -101,13 +99,7 @@ from src.agents.arxiv_tools import (
     extract_metadata_from_arxiv_result
 )
 
-arxiv_agent = create_react_agent(paper_llm, 
-                            tools=[extract_arxiv_id],
-                            # prompt=PromptTemplate.from_template(
-                            # """
-                            # 당신은 arxiv_tool 관련 모든 대화를 처리하는 agent 입니다.
-                            # """)
-                            )
+arxiv_agent = create_react_agent(paper_llm, tools=[extract_arxiv_id])
 def check_duplicated_arxiv_id(state:dict):
     try:
 
@@ -191,12 +183,18 @@ def summary_paper(state:dict):
                             
     단, 사용자에게 답변할 때에는 아래와 같은 양식을 따라주세요.
     
+                            
+    # [논문 title / 원문 그대로 작성해주세요.]
+                            
     # Abstract
-    [논문의 abstract / 이때 .뒤에 개행 반드시 넣어줘. 이러면 가독성이 더 좋아]
+    [논문의 abstract / 이때 .뒤에 개행을 반드시 넣어주세요. 이는 사용자가 읽을 때 가독성을 향상 시키기 위함 입니다.]
+                            
     # Summary
     [논문의 요약]
+                            
     # Keyword
     [논문의 키워드 / 논문의 키워드는 기술명 중심으로 정리해줘. 이 논문을 이해하기 위해서 이 키워드는 알아야한다. 이런 부분들에 대해 작성해줘]
+                            
     # reference
     [해당 논문을 더 깊게 이해하기 위한 추천 논문 목록]
                             
