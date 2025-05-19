@@ -43,8 +43,9 @@ def global_weather_tool(city: str = 'Seoul') -> str:
     해외의 도시일 경우 "global_weather_tool"을 호출하세요.
 
     아래는 각각 한국과 해외의 도시 리스트입니다.
-    한국 도시 리스트: {'\n'.join(korea_city_list)}
+    대한민국 도시 리스트: {'\n'.join(korea_city_list)}
     * 만약 "OO구" 이런 입력이 들어온다면 이는 대한민국 서울시에 존재하는 지역구를 의미합니다.
+    * 최대한 대한민국 지역에 대해서는 최대한 정확한 지역구를 입력해주세요.
 
     해외(중국) 도시 리스트: {'\n'.join(china_city_list)}
     해외(일본) 도시 리스트: {'\n'.join(japan_city_list)}
@@ -84,7 +85,7 @@ def global_weather_tool(city: str = 'Seoul') -> str:
 
 
 if __name__ == "__main__":
-    weather_mcp.run(transport="stdio")
+    weather_mcp.run(transport="sse")
     '''
     stdio로 실행을 원한다면
     transfport 파라미터를 삭제하거나 (default가 stdio)

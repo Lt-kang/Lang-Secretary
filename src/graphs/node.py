@@ -1,9 +1,11 @@
-from mcp import ClientSession, StdioServerParameters
+from mcp import ClientSession, StdioServerParameters 
 from mcp.client.stdio import stdio_client
-
+from langchain_mcp_adapters.client import MultiServerMCPClient
 from langchain_mcp_adapters.tools import load_mcp_tools
 from langgraph.prebuilt import create_react_agent
 
+
+from src.config import WEATHER_MCP_PORT
 import os    
 
 from src.core.chain_registry import (
@@ -27,12 +29,12 @@ def supervisor_node(state:dict):
 
 
 def memory_input_node(state:dict, memory):
+    memory.human_message_save(state["user_input"])
     state["user_input"] = memory.get_chat_history(state["user_input"])
     return state
 
 def memory_save_node(state:dict, memory):
-    memory.ai_message_save(str(state["final_answer"]))
-    memory.human_message_save(str(state["user_input"]))
+    memory.ai_message_save(state["final_answer"])
     return state
 
 def default_answer_node(state:dict):
@@ -42,31 +44,7 @@ def default_answer_node(state:dict):
 
 
 
-async def call_weather_mcp(state:dict):
-    server_params = StdioServerParameters(
-        command="python", 
-        args=[os.getcwd() + r"\src\mcp_server\weather\weather_mcp_stdio.py"]
-    )
-
-    # print(os.getcwd() + r"\src\mcp_server\weather\weather_mcp_stdio.py")
-
-    async with stdio_client(server_params) as (read, write):
-        async with ClientSession(read, write) as session:
-            await session.initialize()
-
-            tools = await load_mcp_tools(session)
-
-            agent = create_react_agent(weather_llm, tools)
-
-
-            user_input = state['user_input']
-            inputs = {"messages": [("human", user_input)]}
-
-            result = await agent.ainvoke(inputs)
-    state['final_answer'] = result
-    return state
-
-# def call_weather_mcp(state:dict):
+# async def call_weather_mcp(state:dict):
 #     server_params = StdioServerParameters(
 #         command="python", 
 #         args=[os.getcwd() + r"\src\mcp_server\weather\weather_mcp_stdio.py"]
@@ -74,12 +52,11 @@ async def call_weather_mcp(state:dict):
 
 #     # print(os.getcwd() + r"\src\mcp_server\weather\weather_mcp_stdio.py")
 
-#     with stdio_client(server_params) as (read, write):
-#         with ClientSession(read, write) as session:
-#             session.initialize()
+#     async with stdio_client(server_params) as (read, write):
+#         async with ClientSession(read, write) as session:
+#             await session.initialize()
 
-
-#             tools = load_mcp_tools(session)
+#             tools = await load_mcp_tools(session)
 
 #             agent = create_react_agent(weather_llm, tools)
 
@@ -87,9 +64,31 @@ async def call_weather_mcp(state:dict):
 #             user_input = state['user_input']
 #             inputs = {"messages": [("human", user_input)]}
 
-#             result = agent.invoke(inputs)
+#             result = await agent.ainvoke(inputs)
 #     state['final_answer'] = result
 #     return state
+
+
+async def call_weather_mcp(state:dict):
+    weather_server_info = {
+            "weather": {
+                "url": f"http://localhost:{WEATHER_MCP_PORT}/sse",
+                "transport": "sse",
+            }
+        }
+    client = MultiServerMCPClient(weather_server_info)
+    weather_tools = await client.get_tools()
+    agent = create_react_agent(weather_llm, weather_tools)
+
+    user_input = state['user_input']
+    inputs = {"messages": [("human", user_input)]}
+
+    # print(inputs)
+    result = await agent.ainvoke(inputs)
+    # print(result['messages'][-1].content)
+    state['final_answer'] = result['messages'][-1].content
+    return state
+
 
 
 from src.core.db.search import search_arxiv_id
@@ -109,24 +108,30 @@ arxiv_agent = create_react_agent(paper_llm,
                                    당신은 arxiv_tool 관련 모든 대화를 처리하는 agent 입니다.
                                    """))
 def check_duplicated_arxiv_id(state:dict):
+    try:
+        inputs = {"messages": [("system", """
+                                            extract_arxiv_id을 사용하여 
+                                            사용자의 입력을 받아 올바른 형식의 arxiv_id 혹은 arxiv_url을 추출하세요.
+                                            별도의 메시지를 출력하지 말고 오직 추출된 arxiv_id 혹은 arxiv_url을 반환하세요.
+                                        """),
+                            ("human", state["user_input"])]}
+        arxiv_id = arxiv_agent.invoke(inputs)
 
-    inputs = {"messages": [("system", """
-                                        extract_arxiv_id을 사용하여 
-                                        사용자의 입력을 받아 올바른 형식의 arxiv_id 혹은 arxiv_url을 추출하세요.
-                                        별도의 메시지를 출력하지 말고 오직 추출된 arxiv_id 혹은 arxiv_url을 반환하세요.
-                                      """),
-                           ("human", state["user_input"])]}
-    arxiv_id = arxiv_agent.invoke(inputs)
-
-    if arxiv_id:
-        duplicated_result = search_arxiv_id(arxiv_id)
-        state["paper_arxiv_id"] = arxiv_id
-        state["paper_duplicated_check"] = "true" if duplicated_result else "false"
-        state["final_answer"] = "이미 저장된 논문입니다." if duplicated_result else "저장되지 않은 논문입니다."
+        if arxiv_id:
+            duplicated_result = search_arxiv_id(arxiv_id)
+            state["paper_arxiv_id"] = arxiv_id
+            state["paper_duplicated_check"] = "true" if duplicated_result else "false"
+            state["final_answer"] = "이미 저장된 논문입니다." if duplicated_result else "저장되지 않은 논문입니다."
+            return state
+        
+        state["final_answer"] = "arxiv_id를 찾을 수 없습니다."
         return state
     
-    state["final_answer"] = "arxiv_id를 찾을 수 없습니다."
-    return state
+    except Exception as e:
+        state["final_answer"] = "오류가 발생했습니다. 다시 시도해주세요."
+        state["paper_duplicated_check"] = "error"
+        return state
+
 
 
 from pathlib import Path

@@ -1,13 +1,11 @@
 import streamlit as st
 import requests
 
+from src.config import FASTAPI_PORT
 
-from dotenv import load_dotenv
-import os
 
-load_dotenv()
 
-backend_url = "http://localhost:8000"
+backend_url = f"http://localhost:{FASTAPI_PORT}/graphbot/invoke"
 
 st.set_page_config(page_title="Lang-Secretary", page_icon=":shark:")
 st.title("Lang-Secretary")
@@ -36,7 +34,7 @@ if user_prompt := st.chat_input("메시지를 입력하세요..."):
         st.markdown(user_prompt)
 
     # 여기에서 챗봇 응답 생성 (예시: 에코 응답)
-    response = requests.post(f"{backend_url}/graphbot/invoke", 
+    response = requests.post(f"{backend_url}", 
                                  json={
                                         "input": {
                                           "user_input": user_prompt,
@@ -57,12 +55,14 @@ if user_prompt := st.chat_input("메시지를 입력하세요..."):
     
     try:
         # 챗봇 응답을 세션에 저장
+        output = response.json()['output']['final_answer'].replace("\n", "  \n")
         st.session_state.messages.append({"role": "assistant", 
-                                          "content": response.json()['output']['final_answer']})
+                                          "content": output})
         
         # 챗봇 응답 출력
         with st.chat_message("assistant"):
-            st.markdown(response.json()['output']['final_answer'])
+            st.markdown(output)
+            # st.write(response.json()['output']['final_answer'])
 
     except Exception as e:
         st.session_state.messages.append({"role": "assistant", 

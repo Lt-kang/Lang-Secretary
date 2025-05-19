@@ -1,3 +1,10 @@
+# Deploy
+port:
+  streamlit: 8501 # fixed
+  fastapi: 8000
+  weather_mcp: 7000
+
+
 # DB Part
 sqlite3:
   save_path: ./storage/sqlite3

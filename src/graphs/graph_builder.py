@@ -61,7 +61,8 @@ def build_graph():
                                 lambda state: state["paper_duplicated_check"],
                                 {
                                     "true": "end_node",
-                                    "false": "paper-save_paper"
+                                    "false": "paper-save_paper",
+                                    "error": "end_node"
                                 })
     
     graph.add_edge("paper-save_paper", "paper-summary")
