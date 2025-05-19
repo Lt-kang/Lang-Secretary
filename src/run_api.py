@@ -5,9 +5,6 @@ from langserve import add_routes
 from src.graphs.graph_builder import build_graph
 
 
-# from pydantic import BaseModel
-# class MyInput(BaseModel):
-#     text: str
 
 
 app = FastAPI()

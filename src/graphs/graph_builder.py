@@ -1,52 +1,76 @@
+from langchain_core.runnables import RunnableLambda
 from langgraph.graph import StateGraph
 
-from src.chains.chain_registry import categorize_chain, default_chain, study_chain
-from src.agents.agents_registry import weather_agent, paper_agent 
-from src.core.node import generate_node, categorize_node
-from src.schema.graph import GraphState
+
+
+from src.graphs.memory import MemoryStorage
+from src.graphs.state import GraphState
+from src.graphs.node import (
+    supervisor_node,
+    default_answer_node,
+    memory_input_node,
+    memory_save_node,
+    call_weather_mcp,
+    check_duplicated_arxiv_id,
+    save_paper,
+    summary_paper,
+)
 
 
 
 
-router_mapping = {
-    "날씨": "weather",
-    "논문": "paper",
-    "기타": "default"
-}
 def route_logic(state):
     route = state["route"].lower()
-    return router_mapping.get(route, "default")
-
+    return route if route in ['weather', 'paper', 'default'] else "default"
 
 
 
 def build_graph():
+    chat_memory = MemoryStorage()
+
+
     graph = StateGraph(GraphState)
 
-    '''
-    chain
-    '''
-    graph.add_node("categorize", lambda state: categorize_node(state, categorize_chain))
-    graph.add_node("default", lambda state: generate_node(state, default_chain))
-    graph.add_node("study", lambda state: generate_node(state, study_chain))
 
+    graph.add_node("start_node", RunnableLambda(lambda state: memory_input_node(state, chat_memory)))
+    graph.add_node("supervisor", RunnableLambda(supervisor_node))
 
-    '''
-    agent
-    '''
-    graph.add_node("weather", lambda state: generate_node(state, weather_agent))
-    graph.add_node("paper", lambda state: generate_node(state, paper_agent))
+    graph.add_node("default", RunnableLambda(default_answer_node))
+
+    graph.add_node("weather", RunnableLambda(call_weather_mcp))
+
+    graph.add_node("paper-check_duplicated_arxiv_id", RunnableLambda(check_duplicated_arxiv_id))
+    graph.add_node("paper-save_paper", RunnableLambda(save_paper))
+    graph.add_node("paper-summary", RunnableLambda(summary_paper))
+
+    graph.add_node("end_node", RunnableLambda(lambda state: memory_save_node(state, chat_memory)))
+
+    graph.set_entry_point("start_node")
+    graph.add_edge("start_node", "supervisor")
+    graph.add_conditional_edges(
+                                "supervisor", 
+                                route_logic,
+                                {
+                                    "weather": "weather",
+                                    "paper": "paper-check_duplicated_arxiv_id",
+                                    "default": "default"
+                                })
     
+    graph.add_conditional_edges(
+                                "paper-check_duplicated_arxiv_id",
+                                lambda state: state["paper_duplicated_check"],
+                                {
+                                    "true": "end_node",
+                                    "false": "paper-save_paper"
+                                })
+    
+    graph.add_edge("paper-save_paper", "paper-summary")
+    graph.add_edge("paper-summary", "end_node")
 
+    graph.add_edge("weather", "end_node")
+    graph.add_edge("default", "end_node")
 
-    graph.set_entry_point("categorize")
-    graph.add_conditional_edges("categorize", route_logic)
-
-    graph.set_finish_point("weather")
-    graph.set_finish_point("paper")
-    graph.set_finish_point("study")
-    graph.set_finish_point("default")
-
+    graph.set_finish_point("end_node")
 
     runnable_chain = graph.compile()
     return runnable_chain
@@ -54,6 +78,8 @@ def build_graph():
 
 
 if __name__ == "__main__":
+    import asyncio
+    
     print("<<<<<<<<<<<<<<<<<<< test conversation >>>>>>>>>>>>>>>>>>>")
     runnable_chain = build_graph()
     while True:
@@ -62,5 +88,13 @@ if __name__ == "__main__":
             print("Program exit")
             break
 
-        result = runnable_chain.invoke({"input": user_input})
-        print(f"LangGraph-bot: {result['response']}")
+        try:
+            result = runnable_chain.invoke({"user_input": user_input})
+        except:
+            async def main():
+                result = await runnable_chain.ainvoke({"user_input": user_input})
+                return result
+            result = asyncio.run(main())
+
+        print(f"LangGraph-bot: {result}")
+        

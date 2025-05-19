@@ -1,6 +1,6 @@
 from langchain_openai import ChatOpenAI
 
-from src.core.config import OPENAI_API_KEY
+from src.config import OPENAI_API_KEY
 
 
 
