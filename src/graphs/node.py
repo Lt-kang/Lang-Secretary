@@ -91,7 +91,6 @@ async def call_weather_mcp(state:dict):
 
 from src.core.db.search import search_arxiv_id
 from src.core.db.commit import save_document, save_paper_info
-from langchain.prompts import PromptTemplate
 
 from src.agents.arxiv_tools import (
     extract_arxiv_id,
@@ -115,9 +114,7 @@ def check_duplicated_arxiv_id(state:dict):
                                         """),
                             ("human", f'{state["user_input"].split("Human:")[-1].strip()} ~ 이 문장에서 arxiv_id를 추출해주세요.')]}
         
-        print(f'{state["user_input"].split("Human:")[-1].strip()} 이 문장에서 arxiv_id를 추출해주세요.')
         arxiv_id = arxiv_agent.invoke(inputs)['messages'][-1].content
-        print(arxiv_id)
 
         if arxiv_id:
             duplicated_result = search_arxiv_id(arxiv_id)
@@ -211,6 +208,19 @@ ReAct는 reasoning이나 acting 중 하나만 사용하는 방법에 비해 인�
 - Error Propagation  
 - In-context Learning
 
+# TimeLine
+1. 1997년 - [Long Short-Term Memory (LSTM)](https://www.bioinf.jku.at/publications/older/2604.pdf)  
+   -> RNN의 장기 의존성 문제를 해결하며 sequence modeling의 대표적 구조로 자리잡음. Transformer는 이러한 recurrence 구조를 대체함.
+
+2. 2014년 - [Sequence to Sequence Learning with Neural Networks](https://arxiv.org/abs/1409.3215)  
+   -> Encoder-Decoder 구조를 도입하여 기계번역 등 다양한 sequence transduction 문제에 적용. Transformer는 이 구조를 attention 기반으로 재해석함.
+
+3. 2015년 - [Neural Machine Translation by Jointly Learning to Align and Translate (Bahdanau Attention)](https://arxiv.org/abs/1409.0473)  
+   -> Attention mechanism을 도입하여 encoder와 decoder 간의 정보 흐름을 개선. Transformer는 이 attention을 모델의 핵심으로 확장함.
+
+4. 2017년 - [Attention Is All You Need](https://arxiv.org/abs/1706.03762)  
+   -> Recurrence와 convolution 없이 오직 attention만으로 sequence modeling을 수행하는 Transformer 아키텍처를 제안. 이후 NLP 및 다양한 분야에서 표준이 됨.
+
 # reference
 * [Chain-of-Thought Prompting Elicits Reasoning in Large Language Models (Wei et al., 2022)](https://arxiv.org/abs/2201.11903)  
   -> LLM의 chain-of-thought reasoning 기법의 핵심 논문으로, 본 논문의 reasoning trace와 직접적으로 연결됨.
@@ -252,10 +262,24 @@ def summary_paper(state:dict):
                             
     # Summary
     [논문의 요약 / 반드시 문장 단위로 개행을 넣어주세요.]
-                            
+
     # Keyword
     [논문의 키워드 / 논문의 키워드는 기술명 중심으로 정리해주세요. 이 논문을 이해하기 위해서 이 키워드는 알아야한다고 판단되는 부분에 대해 작성해주세요.]
-                            
+
+    # TimeLine
+    [논문 내용에 도달하기까지의 타임라인 / 기술 발전을 중심으로 작성해주세요. / 반드시 문장 단위로 개행을 넣어주세요.]
+    * 아래는 TimeLine에 대한 양식 입니다. (개수는 꼭 4개만 할 필요는 없습니다. 적거나 많아도 괜찮습니다.)
+      * 1. 0000년 - [주요 기술](해당 기술 논문 url)
+        -> 기술 관련 설명과 논문 주제와 어떻게 연결 되는지에 대한 내용
+      * 2. 0000년 - [주요 기술](해당 기술 논문 url)
+        -> 기술 관련 설명과 논문 주제와 어떻게 연결 되는지에 대한 내용
+      * 3. 0000년 - [주요 기술](해당 기술 논문 url)
+        -> 기술 관련 설명과 논문 주제와 어떻게 연결 되는지에 대한 내용
+      * 4. 0000년 - [주요 기술](해당 기술 논문 url)
+        -> 기술 관련 설명과 논문 주제와 어떻게 연결 되는지에 대한 내용
+      * 5. 0000년 - [주요 기술](해당 기술 논문 url) (마지막일 경우 해당 논문 제목을 포함해주세요.)
+        -> 기술 관련 설명과 논문 주제와 어떻게 연결 되는지에 대한 내용
+      
     # reference
     [해당 논문을 더 깊게 이해하기 위한 추천 논문 목록 / 논문의 url까지 포함해주세요. 그리고 추천한 이유를 짧게 코맨트로 작성해주세요. / 추천 논문은 해당 paper 내 존재하는 reference 중 추천 논문이어야 합니다. / 전체 reference 중 최소 30% 이상 추천해주세요.]
     [이것은 reference에 대한 예시 입니다.
