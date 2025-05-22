@@ -300,6 +300,3 @@ def summary_paper(state:dict):
     with open(Path(normal_storage_path) / state["paper_arxiv_id"] / f"{state['paper_arxiv_id']}.md", "w", encoding="utf-8") as f:
         f.write(answer)
     return state
-
-
-
