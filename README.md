@@ -63,7 +63,7 @@ ___
 
 # 2. 기능 소개
 ## Weather MCP server
-[](https://github.com/Lt-kang/Lang-Secretary/tree/main/assets/001.png)
+![image](https://github.com/Lt-kang/Lang-Secretary/blob/main/assets/001.png)
 
 국내/외 날씨를 알려주는 MCP server 입니다.  
 국내의 경우 세부 명칭 (서울특별시 동작구 등)까지 검색이 가능하며  
@@ -71,7 +71,7 @@ ___
 
 
 ## Arxiv Agent
-[](https://github.com/Lt-kang/Lang-Secretary/tree/main/assets/002.png)
+![image](https://github.com/Lt-kang/Lang-Secretary/blob/main/assets/002.png)
 
 Arxiv Agent에 대한 아키텍처는 위 이미지와 같습니다.  
 arxiv url에서 arxiv id를 추출한 뒤   
