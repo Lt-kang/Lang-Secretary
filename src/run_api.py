@@ -9,7 +9,7 @@ from src.config import FASTAPI_PORT
 
 app = FastAPI()
 runnable_chain = build_graph()
-add_routes(app, runnable_chain, path="/graphbot")
+add_routes(app, runnable_chain, path="/paper_summary")
 
 if __name__ == "__main__":
     uvicorn.run("src.run_api:app", host="0.0.0.0", port=FASTAPI_PORT, reload=True)

@@ -3,3 +3,4 @@ venv/
 storage/
 **/__pycache__/
 .vscode/
+ignore_folder/
